@@ -1,0 +1,5 @@
+numpy
+seaborn
+scikit-learn
+transformers
+torch
