@@ -70,9 +70,9 @@ Unit tests are available in the tests/unit/ folder to verify each module indepen
 
 Run tests using pytest
 
-## 🔧 Challenges Faced
-### ⚠️ Git conflicts
-Solved by using git pull --rebase and frequent commits.
+## 🔧 Challenges Faced and Collaboration
+### ⚠️ Git sizes
+Some of the files involving the model creation were to heavy and were difficult to put on the plateform 
 
 ### 🧠 Model optimization
 Hyperparameter tuning and reducing training epochs due to local machine limitations.
@@ -91,6 +91,6 @@ Commit messages were kept descriptive and task-specific
 Kaggle Inspiration Notebook: Sentiment Analysis Using BERT
 
 ## 🧑‍💻 Contributors
-Noémi DOMBOU (emi-ane)
-Dhavalkumar PATEL (Dhavalpatel1811)
-Cassandra NONGO (Cassydy-prog)
+  - Noémi DOMBOU (emi-ane)
+  - Dhavalkumar PATEL (Dhavalpatel1811)
+  - Cassandra NONGO (Cassydy-prog)
