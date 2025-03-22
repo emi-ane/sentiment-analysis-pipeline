@@ -82,27 +82,13 @@ The number of training epochs from the original Kaggle notebook had to be reduce
 
 ### 👥 Collaboration
 Git workflow with feature branches, pull requests, and code reviews
+
 Each team member handled specific parts of the pipeline (Cassandra and Noemi handled the data extraction/Processing and the corresponding Testing files and Dhaval handled the model and inference parts)
+
 Commit messages were kept descriptive and task-specific
 
 ### 🔗 Resources
 Kaggle Inspiration Notebook: Sentiment Analysis Using BERT
-
-## 📁 Project Structure
-sentiment-analysis-pipeline/
-├── src/
-│   ├── data_extraction.py
-│   ├── data_processing.py
-│   ├── model.py
-│   └── inference.py
-├── tests/
-│   └── unit/
-│       ├── test_data_extraction.py
-│       ├── test_data_processing.py
-│       ├── test_model.py
-│       └── test_inference.py
-├── requirements.txt
-└── README.md
 
 ## 🧑‍💻 Contributors
 Noémi DOMBOU (emi-ane)
