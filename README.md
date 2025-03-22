@@ -74,9 +74,6 @@ Run tests using pytest
 ### ⚠️ Git sizes
 Some of the files involving the model creation were to heavy and were difficult to put on the plateform 
 
-### 🧠 Model optimization
-Hyperparameter tuning and reducing training epochs due to local machine limitations.
-
 ### 🐢 Performance constraints
 The number of training epochs from the original Kaggle notebook had to be reduced to fit our hardware capabilities.
 
