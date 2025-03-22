@@ -1,16 +1,24 @@
-import unittest
-import pandas as pd 
 import os
-from src.data_extraction import load_csv_file
+import sys
+import unittest
+import pandas as pd
+from src.data_extraction import load_csv_file  # Assure-toi que cette fonction est bien importable
 
 class TestDataExtraction(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
         """Define the dataset path before running tests"""
-        cls.dataset_path = r"C:\Users\noemi\sentiment-analysis-pipeline\dataset.csv"
 
-        # Check if the dataset file exists before running tests
+        # Dynamically find the project root
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.abspath(os.path.join(current_dir, '..', '..'))
+
+        cls.dataset_path = os.path.join(project_root, 'dataset.csv')
+
+        sys.path.insert(0, project_root)
+
+        # Check if dataset exists before running tests
         if not os.path.exists(cls.dataset_path):
             raise FileNotFoundError(f"Dataset file not found: {cls.dataset_path}")
 
