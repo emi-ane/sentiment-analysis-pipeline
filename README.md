@@ -10,23 +10,23 @@ This project implements a sentiment analysis pipeline using a BERT-based NLP mod
 
 ### 1. Clone the Repository
 
-*** bash
+```bash
 git clone https://github.com/ton-repo/sentiment-analysis-pipeline.git
 cd sentiment-analysis-pipeline 
-
+```
 ### 2. Create a Virtual Environment
 
-*** bash
+```bash
 python -m venv venv
 # On Windows
 venv\Scripts\activate
 # On macOS/Linux
 source venv/bin/activate
-
+```
 ### 3. Install Dependencies
-*** bash
+``` bash
 pip install -r requirements.txt
-
+```
 ## 📊 Usage
 All main scripts are located in the src/ folder.
 
@@ -36,9 +36,9 @@ Loads raw CSV data and handles common errors such as:
   - PermissionError;
   - UnicodeDecodeError
 
-*** bash
+``` bash
 python src/data_extraction.py
-
+```
 ### 2. Data Processing
 Cleans and preprocesses the loaded text: 
   - Removes special characters;
@@ -46,21 +46,24 @@ Cleans and preprocesses the loaded text:
   - Tokenizes using bert-base-uncased;
   - Splits the dataset into training and validation sets
 
-*** bash
+``` bash
 python src/data_processing.py
+```
 
 ### 3. Model Training
 Fine-tunes a pretrained BERT model (AutoModelForSequenceClassification) on the sentiment dataset using Hugging Face's Trainer API or a custom loop.
 
-*** bash
+``` bash
 python src/model.py
+```
 
 ### 4. Inference
 Makes sentiment predictions on new input text.
 
-*** bash
+``` bash
 python src/inference.py
 
+```
 ## ✅ Testing
 Unit tests are available in the tests/unit/ folder to verify each module independently:
   - test_data_extraction.py — Tests data loading and error handling
