@@ -11,7 +11,7 @@ This project implements a sentiment analysis pipeline using a BERT-based NLP mod
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/ton-repo/sentiment-analysis-pipeline.git
+git clone [https://github.com/emi-ane/sentiment-analysis-pipeline.git]
 cd sentiment-analysis-pipeline 
 ```
 ### 2. Create a Virtual Environment
