@@ -75,7 +75,7 @@ Run tests using pytest
 
 ## 🔧 Challenges Faced and Collaboration
 ### ⚠️ Git sizes
-Some of the files involving the model creation were to heavy and were difficult to put on the plateform 
+Some of the files involving the model creation were to heavy and were difficult to put on the plateform but we manage to put them in the repository thanks to git LFS
 
 ### 🐢 Performance constraints
 The number of training epochs from the original Kaggle notebook had to be reduced to fit our hardware capabilities.
