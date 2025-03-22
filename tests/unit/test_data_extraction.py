@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 import pandas as pd
-from src.data_extraction import load_csv_file  # Assure-toi que cette fonction est bien importable
+from src.data_extraction import load_csv_file  
 
 class TestDataExtraction(unittest.TestCase):
 
