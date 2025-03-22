@@ -55,7 +55,7 @@ Fine-tunes a pretrained BERT model (AutoModelForSequenceClassification) on the s
 *** bash
 python src/model.py
 
-4. Inference
+### 4. Inference
 Makes sentiment predictions on new input text.
 
 *** bash
