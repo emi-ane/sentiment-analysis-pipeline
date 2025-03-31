@@ -14,7 +14,9 @@ tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
 class TestDataProcessing(unittest.TestCase):
 
     def test_clean_text(self):
-        """Test if text cleaning removes special characters and lowercases text correctly."""
+        """
+        Test text cleaning: removes symbols and lowers case.
+        """
         raw_text = "Hello, WORLD!! 123"
         cleaned_text = clean_text(raw_text)
         expected_text = "hello world"  # Expected output after cleaning
@@ -35,7 +37,9 @@ class TestDataProcessing(unittest.TestCase):
         )
 
         # Expected token IDs (depends on the tokenizer's vocabulary)
-        expected_tokens = tokenizer.encode(sample_text, add_special_tokens=True)
+        expected_tokens = tokenizer.encode(
+            sample_text, add_special_tokens=True
+            )
 
         self.assertTrue(
             torch.equal(
@@ -48,7 +52,10 @@ class TestDataProcessing(unittest.TestCase):
         """Test if DataLoader correctly wraps the dataset."""
         df = pd.DataFrame(
             {
-                "content": ["This is a positive review", "This is a negative review"],
+                "content": [
+                            "This is a positive review", 
+                            "This is a negative review"
+                            ],
                 "sentiment": [1, 0],
             }
         )
