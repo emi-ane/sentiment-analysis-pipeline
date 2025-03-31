@@ -27,7 +27,7 @@ jobs:
 
       - name: Run evaluation script
         run: |
-          python evaluate.py > metrics.txt
+          python src/evaluate.py > metrics.txt
 
       - name: Check accuracy threshold
         run: |
