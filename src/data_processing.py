@@ -16,7 +16,6 @@ torch.manual_seed(RANDOM_SEED)
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
 
 
-
 def to_sentiment(rating):
     """
     Convertit une note numérique en classe de sentiment :

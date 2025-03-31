@@ -17,7 +17,7 @@ class TestDataProcessing(unittest.TestCase):
 
     def test_clean_text(self):
         """Test text cleaning: removes symbols and lowers case."""
-        
+
         raw_text = "Hello, WORLD!! 123"
         cleaned_text = clean_text(raw_text)
         expected_text = "hello world"
