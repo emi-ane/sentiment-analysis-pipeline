@@ -109,9 +109,7 @@ def test_model_forward_pass(model, sample_dataset):
 
 
 def test_data_loader_creation(sample_data, tokenizer):
-    data_loader = create_data_loader(
-        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
-        )
+    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
 
     assert isinstance(data_loader, DataLoader)
     assert data_loader.batch_size == BATCH_SIZE
@@ -135,9 +133,7 @@ def test_training_step(model, sample_dataset):
             [sample_dataset[0]["input_ids"], sample_dataset[1]["input_ids"]]
         ).to(device),
         "attention_mask": torch.stack(
-            [sample_dataset[0]["attention_mask"], 
-            sample_dataset[1]["attention_mask"]
-            ]
+            [sample_dataset[0]["attention_mask"], sample_dataset[1]["attention_mask"]]
         ).to(device),
         "targets": torch.tensor(
             [sample_dataset[0]["targets"], sample_dataset[1]["targets"]]
@@ -181,9 +177,7 @@ def test_model_save_load(tmp_path, model):
 
 
 def test_data_loader_shuffling(sample_data, tokenizer):
-    data_loader = create_data_loader(
-        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
-        )
+    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
     first_batch = next(iter(data_loader))["input_ids"]
     second_batch = next(iter(data_loader))["input_ids"]
 

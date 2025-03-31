@@ -18,9 +18,7 @@ def load_csv_file(file_path):
     except FileNotFoundError as e:
         raise FileNotFoundError(f"Error: {file_path} was not found.") from e
     except PermissionError as e:
-        raise PermissionError(
-            f"Error: Permission denied"
-        ) from e
+        raise PermissionError(f"Error: Permission denied") from e
     except pd.errors.EmptyDataError as e:
         raise ValueError(f"Error: The file '{file_path}' is empty.") from e
     except pd.errors.ParserError as e:
@@ -32,6 +30,4 @@ def load_csv_file(file_path):
             f"Error: The file '{file_path}' could not be decoded."
         ) from e
     except Exception as e:
-        raise RuntimeError(
-            f"An unexpected error occurred. Details: {e}"
-        ) from e
+        raise RuntimeError(f"An unexpected error occurred. Details: {e}") from e

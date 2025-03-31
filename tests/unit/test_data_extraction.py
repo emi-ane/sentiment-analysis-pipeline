@@ -23,9 +23,7 @@ class TestDataExtraction(unittest.TestCase):
 
         # Check if dataset exists before running tests
         if not os.path.exists(cls.dataset_path):
-            raise FileNotFoundError(
-                f"Dataset file not found: {cls.dataset_path}"
-                )
+            raise FileNotFoundError(f"Dataset file not found: {cls.dataset_path}")
 
     def test_load_real_dataset(self):
         """Test if the dataset loads correctly as a DataFrame."""

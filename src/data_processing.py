@@ -42,9 +42,9 @@ def clean_text(text):
     - Converts text to lowercase.
     - Normalizes whitespace.
     """
-    text = re.sub(r"[^a-zA-Z\s]", "", text)  
+    text = re.sub(r"[^a-zA-Z\s]", "", text)
     text = text.lower()  # Convert to lowercase
-    text = re.sub(r"\s+", " ", text).strip() 
+    text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
@@ -132,10 +132,8 @@ def process_data(df):
     df["content"] = df["content"].astype(str).apply(clean_text)
 
     # Split the data into training, validation, and test sets
-    df_train, df_test = train_test_split(
-        df, test_size=0.2, random_state=RANDOM_SEED)
-    df_val, df_test = train_test_split(
-        df_test, test_size=0.5, random_state=RANDOM_SEED)
+    df_train, df_test = train_test_split(df, test_size=0.2, random_state=RANDOM_SEED)
+    df_val, df_test = train_test_split(df_test, test_size=0.5, random_state=RANDOM_SEED)
 
     print(f"Training set size: {df_train.shape}")
     print(f"Validation set size: {df_val.shape}")
@@ -145,11 +143,8 @@ def process_data(df):
     max_len = 128
     batch_size = 16
 
-    train_data_loader = create_data_loader(
-        df_train, tokenizer, max_len, batch_size)
-    val_data_loader = create_data_loader(
-        df_val, tokenizer, max_len, batch_size)
-    test_data_loader = create_data_loader(
-        df_test, tokenizer, max_len, batch_size)
+    train_data_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
+    val_data_loader = create_data_loader(df_val, tokenizer, max_len, batch_size)
+    test_data_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
 
     return train_data_loader, val_data_loader, test_data_loader

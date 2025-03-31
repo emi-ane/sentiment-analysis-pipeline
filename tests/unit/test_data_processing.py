@@ -37,9 +37,7 @@ class TestDataProcessing(unittest.TestCase):
         )
 
         # Expected token IDs (depends on the tokenizer's vocabulary)
-        expected_tokens = tokenizer.encode(
-            sample_text, add_special_tokens=True
-            )
+        expected_tokens = tokenizer.encode(sample_text, add_special_tokens=True)
 
         self.assertTrue(
             torch.equal(
@@ -52,10 +50,7 @@ class TestDataProcessing(unittest.TestCase):
         """Test if DataLoader correctly wraps the dataset."""
         df = pd.DataFrame(
             {
-                "content": [
-                            "This is a positive review", 
-                            "This is a negative review"
-                            ],
+                "content": ["This is a positive review", "This is a negative review"],
                 "sentiment": [1, 0],
             }
         )
