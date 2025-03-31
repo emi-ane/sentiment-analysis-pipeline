@@ -13,7 +13,7 @@ from transformers import (
     BertTokenizer,
     get_linear_schedule_with_warmup,
 )
-from transformers.optimization import AdamW
+from torch.optim import AdamW
 
 logging.basicConfig(
     level=logging.INFO,
