@@ -9,11 +9,11 @@ from sklearn.model_selection import train_test_split
 from torch import nn
 from torch.utils.data import DataLoader, Dataset
 from transformers import (
-    AdamW,
     BertModel,
     BertTokenizer,
     get_linear_schedule_with_warmup,
 )
+from transformers.optimization import AdamW
 
 logging.basicConfig(
     level=logging.INFO,
