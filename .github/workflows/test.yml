@@ -9,6 +9,7 @@ on:
     branches:
       - main
       - master
+  workflow_dispatch:  # ✅ AJOUT ICI (à ce niveau)
 
 jobs:
   test-and-lint:
