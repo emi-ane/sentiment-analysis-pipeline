@@ -1,16 +1,18 @@
-import pandas as pd
-import numpy as np
 import re
+
+import numpy as np
+import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, Dataset
 from transformers import BertTokenizer
-from torch.utils.data import Dataset, DataLoader
+
 
 # Function to convert score to sentiment
 def to_sentiment(rating):
-    
+
     rating = int(rating)
-    
+
     # Convert to class
     if rating <= 2:
         return 0
@@ -19,16 +21,18 @@ def to_sentiment(rating):
     else:
         return 2
 
+
 # Set random seed for reproducibility
 RANDOM_SEED = 42
 np.random.seed(RANDOM_SEED)
 torch.manual_seed(RANDOM_SEED)
 
 # Set the model name
-MODEL_NAME = 'bert-base-cased'
+MODEL_NAME = "bert-base-cased"
 
 # Load the tokenizer
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
+
 
 # Text cleaning and preprocessing
 def clean_text(text):
@@ -43,6 +47,7 @@ def clean_text(text):
     text = re.sub(r"\s+", " ", text).strip()  # Normalize whitespace
     return text
 
+
 # Function to add a sentiment column if missing
 def add_sentiment_column(df):
     """
@@ -50,12 +55,15 @@ def add_sentiment_column(df):
     - score >= 4 → positive (1)
     - score < 4 → negative (0)
     """
-    if 'score' in df.columns:
-        df['sentiment'] = df['score'].apply(lambda x: 1 if x >= 4 else 0)
+    if "score" in df.columns:
+        df["sentiment"] = df["score"].apply(lambda x: 1 if x >= 4 else 0)
     else:
-        raise ValueError("Error: The dataset must contain either 'score' or 'sentiment' columns.")
+        raise ValueError(
+            "Error: The dataset must contain either 'score' or 'sentiment' columns."
+        )
 
     return df
+
 
 # Custom Dataset class for reviews
 class GPReviewDataset(Dataset):
@@ -77,32 +85,30 @@ class GPReviewDataset(Dataset):
             add_special_tokens=True,
             max_length=self.max_len,
             return_token_type_ids=False,
-            padding='max_length',
+            padding="max_length",
             truncation=True,
             return_attention_mask=True,
-            return_tensors='pt',
+            return_tensors="pt",
         )
 
         return {
-            'review_text': review,
-            'input_ids': encoding['input_ids'].flatten(),
-            'attention_mask': encoding['attention_mask'].flatten(),
-            'targets': torch.tensor(target, dtype=torch.long)
+            "review_text": review,
+            "input_ids": encoding["input_ids"].flatten(),
+            "attention_mask": encoding["attention_mask"].flatten(),
+            "targets": torch.tensor(target, dtype=torch.long),
         }
+
 
 # Function to create a DataLoader
 def create_data_loader(df, tokenizer, max_len, batch_size):
     ds = GPReviewDataset(
-        reviews=df['content'].to_numpy(),  
-        targets=df['sentiment'].to_numpy(),  
+        reviews=df["content"].to_numpy(),
+        targets=df["sentiment"].to_numpy(),
         tokenizer=tokenizer,
-        max_len=max_len
+        max_len=max_len,
     )
-    return DataLoader(
-        ds,
-        batch_size=batch_size,
-        num_workers=0
-    )
+    return DataLoader(ds, batch_size=batch_size, num_workers=0)
+
 
 # Main function for data processing
 def process_data(df):
@@ -115,15 +121,15 @@ def process_data(df):
     - Creates DataLoaders.
     """
     # Check if 'content' and 'sentiment' exist
-    if 'content' not in df.columns:
+    if "content" not in df.columns:
         raise ValueError("Error: The DataFrame must contain a 'content' column.")
 
     # If 'sentiment' is missing, add it from 'score'
-    if 'sentiment' not in df.columns:
+    if "sentiment" not in df.columns:
         df = add_sentiment_column(df)
 
     # Clean the text
-    df['content'] = df['content'].astype(str).apply(clean_text)
+    df["content"] = df["content"].astype(str).apply(clean_text)
 
     # Split the data into training, validation, and test sets
     df_train, df_test = train_test_split(df, test_size=0.2, random_state=RANDOM_SEED)
@@ -134,7 +140,7 @@ def process_data(df):
     print(f"Test set size: {df_test.shape}")
 
     # Tokenize and create DataLoaders
-    max_len = 128  
+    max_len = 128
     batch_size = 16
 
     train_data_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
@@ -143,19 +149,20 @@ def process_data(df):
 
     return train_data_loader, val_data_loader, test_data_loader
 
+
 # Example usage
 if __name__ == "__main__":
     dataset_path = r"C:\Users\noemi\sentiment-analysis-pipeline\dataset.csv"
     df = pd.read_csv(dataset_path)
 
-    #Apply to the dataset 
-    df['sentiment'] = df.score.apply(to_sentiment)
+    # Apply to the dataset
+    df["sentiment"] = df.score.apply(to_sentiment)
 
     # Display initial columns
     print("Initial Columns:", df.columns)
 
     # Add sentiment column if missing
-    if 'sentiment' not in df.columns:
+    if "sentiment" not in df.columns:
         df = add_sentiment_column(df)
 
     # Display final columns after correction
@@ -167,6 +174,6 @@ if __name__ == "__main__":
     # Inspect the first batch of the training DataLoader
     data = next(iter(train_loader))
     print(data.keys())
-    print(data['input_ids'].shape)
-    print(data['attention_mask'].shape)
-    print(data['targets'].shape)
+    print(data["input_ids"].shape)
+    print(data["attention_mask"].shape)
+    print(data["targets"].shape)
