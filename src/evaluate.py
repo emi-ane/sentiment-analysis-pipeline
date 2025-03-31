@@ -15,15 +15,21 @@ from model import (
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# Charger modèle
+# Charger le modèle
 model = SentimentClassifier(n_classes=len(CLASS_NAMES))
-model.load_state_dict(torch.load("src/best_model.bin", map_location=device))
+model.load_state_dict(
+    torch.load(
+        "src/best_model.bin",
+        map_location=device,
+        weights_only=False
+    )
+)
 model = model.to(device)
 
 # Tokenizer
 tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
 
-# Charger et préparer le test set
+# Charger et préparer le jeu de test
 df = pd.read_csv("dataset.csv")
 df["sentiment"] = df.score.apply(
     lambda x: 0 if x <= 2 else 1 if x == 3 else 2
@@ -43,15 +49,21 @@ _, df_test = train_test_split(
 )
 
 test_loader = create_data_loader(
-    df_test, tokenizer, MAX_LEN, BATCH_SIZE
+    df_test,
+    tokenizer,
+    MAX_LEN,
+    BATCH_SIZE
 )
 
 loss_fn = torch.nn.CrossEntropyLoss().to(device)
 
 # Évaluation
 acc, loss, preds, targets = eval_model(
-    model, test_loader, loss_fn, device
+    model,
+    test_loader,
+    loss_fn,
+    device
 )
 
-# Affichage du score (GitHub Actions lit cette ligne !)
+# Affichage du score pour GitHub Actions
 print(f"Test accuracy: {acc:.4f}")
