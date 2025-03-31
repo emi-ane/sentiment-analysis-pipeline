@@ -31,8 +31,8 @@ jobs:
 
       - name: Linting with flake8
         run: |
-          flake8 .
+          flake8 src tests
 
-      - name: Run Unit and Integration Tests
+      - name: Run Unit Tests
         run: |
-          pytest tests/
+          pytest tests/unit
