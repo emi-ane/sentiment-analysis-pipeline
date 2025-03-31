@@ -31,9 +31,9 @@ class SentimentAnalyzerApp:
     
     def setup_model(self):
         try:
-            self.tokenizer = BertTokenizer.from_pretrained('tokenizer')
+            self.tokenizer = BertTokenizer.from_pretrained('bert-base-cased')
             self.model = SentimentClassifier(len(self.class_names)).to(self.device)
-            self.model.load_state_dict(torch.load('best_model.bin', map_location=self.device))
+            self.model.load_state_dict(torch.load('src/best_model.bin', map_location=self.device))
             self.model.eval()
         except Exception as e:
             messagebox.showerror("Error", f"Model loading failed: {str(e)}")

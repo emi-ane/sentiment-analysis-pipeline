@@ -59,7 +59,7 @@ class TestSentimentAnalyzerApp(unittest.TestCase):
         self.mock_model.eval.assert_called_once()
         
         self.torch_load_patcher.assert_called_once_with(
-            'best_model.bin',
+            'src/best_model.bin',
             map_location=self.app.device
         )
         self.mock_root.title.assert_called_once_with("Sentiment Analyzer")
