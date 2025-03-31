@@ -8,64 +8,63 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import BertTokenizer
 
 
-# Function to convert score to sentiment
-def to_sentiment(rating):
+RANDOM_SEED = 42
+MODEL_NAME = "bert-base-cased"
 
+np.random.seed(RANDOM_SEED)
+torch.manual_seed(RANDOM_SEED)
+
+tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
+
+# -------------------- Utilitaires --------------------
+
+
+def to_sentiment(rating):
+    """
+    Convertit une note numérique en classe de sentiment :
+    - 0 = négatif
+    - 1 = neutre
+    - 2 = positif
+    """
     rating = int(rating)
 
-    # Convert to class
     if rating <= 2:
         return 0
     elif rating == 3:
         return 1
-    else:
-        return 2
+    return 2
 
 
-# Set random seed for reproducibility
-RANDOM_SEED = 42
-np.random.seed(RANDOM_SEED)
-torch.manual_seed(RANDOM_SEED)
-
-# Set the model name
-MODEL_NAME = "bert-base-cased"
-
-# Load the tokenizer
-tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
-
-
-# Text cleaning and preprocessing
 def clean_text(text):
     """
-    Cleans and preprocesses the input text.
-    - Removes unnecessary characters.
-    - Converts text to lowercase.
-    - Normalizes whitespace.
+    Nettoie et prétraite un texte :
+    - Retire les caractères spéciaux
+    - Met en minuscules
+    - Normalise les espaces
     """
     text = re.sub(r"[^a-zA-Z\s]", "", text)
-    text = text.lower()  # Convert to lowercase
+    text = text.lower()
     text = re.sub(r"\s+", " ", text).strip()
     return text
 
 
-# Function to add a sentiment column if missing
 def add_sentiment_column(df):
     """
-    Adds a 'sentiment' column based on the 'score' column.
-    - score >= 4 → positive (1)
-    - score < 4 → negative (0)
+    Ajoute une colonne 'sentiment' si elle n'existe pas.
+    Classe les scores :
+    - >= 4 → 1 (positif)
+    - < 4 → 0 (négatif)
     """
     if "score" in df.columns:
         df["sentiment"] = df["score"].apply(lambda x: 1 if x >= 4 else 0)
     else:
         raise ValueError(
-            "Error: Dataset must contain either 'score' or 'sentiment' columns"
+            "Dataset must contain either 'score' or 'sentiment' columns."
         )
-
     return df
 
 
-# Custom Dataset class for reviews
+
 class GPReviewDataset(Dataset):
     def __init__(self, reviews, targets, tokenizer, max_len):
         self.reviews = reviews
@@ -99,52 +98,52 @@ class GPReviewDataset(Dataset):
         }
 
 
-# Function to create a DataLoader
+
 def create_data_loader(df, tokenizer, max_len, batch_size):
-    ds = GPReviewDataset(
+    dataset = GPReviewDataset(
         reviews=df["content"].to_numpy(),
         targets=df["sentiment"].to_numpy(),
         tokenizer=tokenizer,
         max_len=max_len,
     )
-    return DataLoader(ds, batch_size=batch_size, num_workers=0)
+    return DataLoader(dataset, batch_size=batch_size, num_workers=0)
 
 
-# Main function for data processing
+
 def process_data(df):
     """
-    Processes the input DataFrame:
-    - Cleans the text.
-    - Ensures 'sentiment' column exists.
-    - Splits the data into training, validation, and test sets.
-    - Tokenizes the text.
-    - Creates DataLoaders.
+    Prétraite les données :
+    - Vérifie les colonnes
+    - Nettoie les textes
+    - Divise en sets train/val/test
+    - Retourne les DataLoaders
     """
-    # Check if 'content' and 'sentiment' exist
     if "content" not in df.columns:
-        raise ValueError("'content' column missing in DataFrame.")
+        raise ValueError(
+            "'content' column missing in DataFrame."
+        )
 
-    # If 'sentiment' is missing, add it from 'score'
     if "sentiment" not in df.columns:
         df = add_sentiment_column(df)
 
-    # Clean the text
     df["content"] = df["content"].astype(str).apply(clean_text)
 
-    # Split the data into training, validation, and test sets
-    df_train, df_test = train_test_split(df, test_size=0.2, random_state=RANDOM_SEED)
-    df_val, df_test = train_test_split(df_test, test_size=0.5, random_state=RANDOM_SEED)
+    df_train, df_temp = train_test_split(
+        df, test_size=0.2, random_state=RANDOM_SEED
+    )
+    df_val, df_test = train_test_split(
+        df_temp, test_size=0.5, random_state=RANDOM_SEED
+    )
 
     print(f"Training set size: {df_train.shape}")
     print(f"Validation set size: {df_val.shape}")
     print(f"Test set size: {df_test.shape}")
 
-    # Tokenize and create DataLoaders
     max_len = 128
     batch_size = 16
 
-    train_data_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
-    val_data_loader = create_data_loader(df_val, tokenizer, max_len, batch_size)
-    test_data_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
+    train_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
+    val_loader = create_data_loader(df_val, tokenizer, max_len, batch_size)
+    test_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
 
-    return train_data_loader, val_data_loader, test_data_loader
+    return train_loader, val_loader, test_loader

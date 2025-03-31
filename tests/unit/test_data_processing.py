@@ -4,9 +4,12 @@ import pandas as pd
 import torch
 from transformers import BertTokenizer
 
-from src.data_processing import GPReviewDataset, clean_text, create_data_loader
+from src.data_processing import (
+    GPReviewDataset,
+    clean_text,
+    create_data_loader,
+)
 
-# Set the model name and load the tokenizer
 MODEL_NAME = "bert-base-cased"
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
 
@@ -19,7 +22,7 @@ class TestDataProcessing(unittest.TestCase):
         """
         raw_text = "Hello, WORLD!! 123"
         cleaned_text = clean_text(raw_text)
-        expected_text = "hello world"  # Expected output after cleaning
+        expected_text = "hello world"
         self.assertEqual(cleaned_text, expected_text)
 
     def test_tokenization(self):
@@ -27,7 +30,7 @@ class TestDataProcessing(unittest.TestCase):
         sample_text = "Hello world"
         encoding = tokenizer.encode_plus(
             sample_text,
-            add_special_tokens=True,  # Adds [CLS] and [SEP]
+            add_special_tokens=True,
             max_length=10,
             return_token_type_ids=False,
             padding="max_length",
@@ -36,12 +39,13 @@ class TestDataProcessing(unittest.TestCase):
             return_tensors="pt",
         )
 
-        # Expected token IDs (depends on the tokenizer's vocabulary)
-        expected_tokens = tokenizer.encode(sample_text, add_special_tokens=True)
+        expected_tokens = tokenizer.encode(
+            sample_text, add_special_tokens=True
+        )
 
         self.assertTrue(
             torch.equal(
-                encoding["input_ids"][0][: len(expected_tokens)],
+                encoding["input_ids"][0][:len(expected_tokens)],
                 torch.tensor(expected_tokens),
             )
         )
@@ -50,14 +54,19 @@ class TestDataProcessing(unittest.TestCase):
         """Test if DataLoader correctly wraps the dataset."""
         df = pd.DataFrame(
             {
-                "content": ["This is a positive review", "This is a negative review"],
+                "content": [
+                    "This is a positive review",
+                    "This is a negative review",
+                ],
                 "sentiment": [1, 0],
             }
         )
 
         max_len = 128
         batch_size = 2
-        data_loader = create_data_loader(df, tokenizer, max_len, batch_size)
+        data_loader = create_data_loader(
+            df, tokenizer, max_len, batch_size
+        )
 
         batch = next(iter(data_loader))
 

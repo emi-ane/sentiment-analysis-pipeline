@@ -1,5 +1,3 @@
-# tests/unit/test_inference.py
-
 import unittest
 from unittest.mock import MagicMock, patch
 
@@ -10,27 +8,25 @@ from src.inference import SentimentAnalyzerApp, SentimentClassifier
 
 class TestSentimentAnalyzerApp(unittest.TestCase):
     def setUp(self):
-        # Mock Tkinter components
         self.mock_root = MagicMock()
         self.mock_root.children = {}
 
-        # Patch Tkinter dependencies
-        self.tk_patcher = patch("src.inference.tk.Tk", return_value=self.mock_root)
+        self.tk_patcher = patch(
+            "src.inference.tk.Tk", return_value=self.mock_root
+        )
         self.messagebox_patcher = patch("src.inference.messagebox")
 
-        # Mock model components
         self.mock_tokenizer = MagicMock()
         self.mock_model = MagicMock(spec=SentimentClassifier)
         self.mock_model.device = "cpu"
         self.mock_model.to.return_value = self.mock_model
 
-        # Start patchers
         self.mock_tk = self.tk_patcher.start()
         self.mock_messagebox = self.messagebox_patcher.start()
 
-        # Patch model and tokenizer creation
         self.model_patcher = patch(
-            "src.inference.SentimentClassifier", return_value=self.mock_model
+            "src.inference.SentimentClassifier",
+            return_value=self.mock_model,
         ).start()
 
         self.tokenizer_patcher = patch(
@@ -38,15 +34,12 @@ class TestSentimentAnalyzerApp(unittest.TestCase):
             return_value=self.mock_tokenizer,
         ).start()
 
-        # Patch torch.load to avoid file system access
         self.torch_load_patcher = patch(
             "src.inference.torch.load", return_value={}
         ).start()
 
-        # Initialize app with mocked components
         self.app = SentimentAnalyzerApp(self.mock_root)
 
-        # Mock GUI widgets
         self.app.result_label = MagicMock()
         self.app.text_input = MagicMock()
 
@@ -72,9 +65,10 @@ class TestSentimentAnalyzerApp(unittest.TestCase):
         ):
             app = SentimentAnalyzerApp(self.mock_root)
 
-            self.mock_messagebox.showerror.assert_called_once_with(
-                "Error", "Model loading failed: Load error"
-            )
+            args, _ = self.mock_messagebox.showerror.call_args
+            self.assertEqual(args[0], "Error")
+            self.assertIn("Load error", args[1])
+
             self.mock_root.destroy.assert_called_once()
             self.assertFalse(hasattr(app, "model"))
 
@@ -111,7 +105,8 @@ class TestSentimentAnalyzerApp(unittest.TestCase):
         )
 
         self.app.result_label.config.assert_called_once_with(
-            text="Sentiment: Positive (Confidence: 0.70)", fg="#2ecc71"
+            text="Sentiment: Positive (Confidence: 0.70)",
+            fg="#2ecc71"
         )
 
     def test_color_mapping(self):

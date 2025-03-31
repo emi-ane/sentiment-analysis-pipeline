@@ -7,17 +7,21 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 
-from src.model import (BATCH_SIZE, CLASS_NAMES, MAX_LEN, MODEL_NAME,
-                       SentimentClassifier, SentimentDataset,
-                       create_data_loader)
+from src.model import (
+    BATCH_SIZE,
+    CLASS_NAMES,
+    MAX_LEN,
+    MODEL_NAME,
+    SentimentClassifier,
+    SentimentDataset,
+    create_data_loader,
+)
 
-# Add the project root to the Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
 sys.path.insert(0, project_root)
 
 
-# Fixtures
 @pytest.fixture
 def tokenizer():
     return BertTokenizer.from_pretrained(MODEL_NAME)
@@ -45,7 +49,10 @@ def sample_data():
                 "Below average",
                 "Mixed feelings",
             ],
-            "sentiment": [2, 0, 1, 2, 1, 2, 0, 1, 2, 0, 1, 2, 0, 2, 1, 1],
+            "sentiment": [
+                2, 0, 1, 2, 1, 2, 0, 1,
+                2, 0, 1, 2, 0, 2, 1, 1
+            ],
         }
     )
 
@@ -65,7 +72,6 @@ def model():
     return SentimentClassifier(len(CLASS_NAMES))
 
 
-# Tests
 def test_dataset_item(sample_dataset):
     item = sample_dataset[0]
     assert isinstance(item, dict)
@@ -109,7 +115,9 @@ def test_model_forward_pass(model, sample_dataset):
 
 
 def test_data_loader_creation(sample_data, tokenizer):
-    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
+    data_loader = create_data_loader(
+        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
+    )
 
     assert isinstance(data_loader, DataLoader)
     assert data_loader.batch_size == BATCH_SIZE
@@ -127,37 +135,35 @@ def test_training_step(model, sample_dataset):
     model.to(device)
     model.train()
 
-    # Create a mini-batch of 2 samples
     batch = {
-        "input_ids": torch.stack(
-            [sample_dataset[0]["input_ids"], sample_dataset[1]["input_ids"]]
-        ).to(device),
-        "attention_mask": torch.stack(
-            [sample_dataset[0]["attention_mask"], sample_dataset[1]["attention_mask"]]
-        ).to(device),
-        "targets": torch.tensor(
-            [sample_dataset[0]["targets"], sample_dataset[1]["targets"]]
-        ).to(device),
+        "input_ids": torch.stack([
+            sample_dataset[0]["input_ids"],
+            sample_dataset[1]["input_ids"]
+        ]).to(device),
+        "attention_mask": torch.stack([
+            sample_dataset[0]["attention_mask"],
+            sample_dataset[1]["attention_mask"]
+        ]).to(device),
+        "targets": torch.tensor([
+            sample_dataset[0]["targets"],
+            sample_dataset[1]["targets"]
+        ]).to(device),
     }
 
     optimizer = torch.optim.AdamW(model.parameters(), lr=2e-5)
     loss_fn = torch.nn.CrossEntropyLoss()
 
-    # Initial forward pass
     outputs = model(batch["input_ids"], batch["attention_mask"])
     loss = loss_fn(outputs, batch["targets"])
     initial_loss = loss.item()
 
-    # Backward pass and optimization
     optimizer.zero_grad()
     loss.backward()
     optimizer.step()
 
-    # Second forward pass
     outputs_new = model(batch["input_ids"], batch["attention_mask"])
     loss_new = loss_fn(outputs_new, batch["targets"])
 
-    # Verify loss changes (not guaranteed to decrease, but should change)
     assert loss_new.item() != initial_loss
 
 
@@ -168,18 +174,19 @@ def test_model_save_load(tmp_path, model):
     loaded_model = SentimentClassifier(len(CLASS_NAMES))
     loaded_model.load_state_dict(torch.load(save_path))
 
-    # Verify parameters match
     for (name, param), (loaded_name, loaded_param) in zip(
-        model.named_parameters(), loaded_model.named_parameters()
+        model.named_parameters(),
+        loaded_model.named_parameters(),
     ):
         assert name == loaded_name
         assert torch.equal(param, loaded_param)
 
 
 def test_data_loader_shuffling(sample_data, tokenizer):
-    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
+    data_loader = create_data_loader(
+        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
+    )
     first_batch = next(iter(data_loader))["input_ids"]
     second_batch = next(iter(data_loader))["input_ids"]
 
-    # Check if shuffling results in different batches (not guaranteed but likely)
     assert not torch.equal(first_batch, second_batch)
