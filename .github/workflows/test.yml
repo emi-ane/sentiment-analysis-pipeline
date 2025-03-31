@@ -9,7 +9,7 @@ on:
     branches:
       - main
       - master
-  workflow_dispatch:  # ✅ AJOUT ICI (à ce niveau)
+  workflow_dispatch:
 
 jobs:
   test-and-lint:
@@ -33,6 +33,9 @@ jobs:
       - name: Linting with flake8
         run: |
           flake8 src tests
+
+      - name: Set PYTHONPATH
+        run: echo "PYTHONPATH=$PYTHONPATH:$(pwd)/src" >> $GITHUB_ENV
 
       - name: Run Unit Tests
         run: |
