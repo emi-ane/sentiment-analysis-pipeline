@@ -15,7 +15,9 @@ class TestSentimentAnalyzerApp(unittest.TestCase):
         self.mock_root.children = {}
 
         # Patch Tkinter dependencies
-        self.tk_patcher = patch("src.inference.tk.Tk", return_value=self.mock_root)
+        self.tk_patcher = patch(
+            "src.inference.tk.Tk", return_value=self.mock_root
+            )
         self.messagebox_patcher = patch("src.inference.messagebox")
 
         # Mock model components

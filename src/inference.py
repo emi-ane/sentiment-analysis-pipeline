@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 import torch
-import torch.nn.functional as F  # <-- Added this import
+import torch.nn.functional as F  
 from torch import nn
 from transformers import BertModel, BertTokenizer
 
@@ -24,14 +24,16 @@ class SentimentClassifier(nn.Module):
 class SentimentAnalyzerApp:
     def __init__(self, root):
         self.root = root
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device(
+            "cuda" if torch.cuda.is_available() else "cpu")
         self.class_names = ["Negative", "Neutral", "Positive"]
         self.setup_model()
 
     def setup_model(self):
         try:
             self.tokenizer = BertTokenizer.from_pretrained("bert-base-cased")
-            self.model = SentimentClassifier(len(self.class_names)).to(self.device)
+            self.model = SentimentClassifier(
+                len(self.class_names)).to(self.device)
             self.model.load_state_dict(
                 torch.load("src/best_model.bin", map_location=self.device)
             )
@@ -39,14 +41,15 @@ class SentimentAnalyzerApp:
         except Exception as e:
             messagebox.showerror("Error", f"Model loading failed: {str(e)}")
             self.root.destroy()
-            return  # Return here to prevent calling create_widgets if model loading fails
+            return  
 
         self.create_widgets()
 
     def create_widgets(self):
         self.root.title("Sentiment Analyzer")
 
-        self.text_input = tk.Text(self.root, height=8, width=50, font=("Arial", 12))
+        self.text_input = tk.Text(
+            self.root, height=8, width=50, font=("Arial", 12))
         self.text_input.pack(pady=10, padx=10)
 
         analyze_btn = tk.Button(
@@ -91,17 +94,18 @@ class SentimentAnalyzerApp:
                 prediction.item()
             ]  # Added .item() to convert tensor to Python scalar
             self.result_label.config(
-                text=f"Sentiment: {sentiment} (Confidence: {confidence.item():.2f})",
-                fg=self.get_color(sentiment),
+                text=
+                f"Sentiment: {sentiment} (Confidence: {confidence.item():.2f})"
+                ,fg=self.get_color(sentiment),
             )
 
         except Exception as e:
             messagebox.showerror("Error", f"Analysis failed: {str(e)}")
 
     def get_color(self, sentiment):
-        return {"Negative": "#e74c3c", "Neutral": "#f1c40f", "Positive": "#2ecc71"}.get(
-            sentiment, "black"
-        )
+        return {
+            "Negative": "#e74c3c", "Neutral": "#f1c40f", "Positive": "#2ecc71"
+            }.get(sentiment, "black")
 
 
 if __name__ == "__main__":

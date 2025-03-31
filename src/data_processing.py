@@ -42,9 +42,9 @@ def clean_text(text):
     - Converts text to lowercase.
     - Normalizes whitespace.
     """
-    text = re.sub(r"[^a-zA-Z\s]", "", text)  # Remove special characters and numbers
+    text = re.sub(r"[^a-zA-Z\s]", "", text)  
     text = text.lower()  # Convert to lowercase
-    text = re.sub(r"\s+", " ", text).strip()  # Normalize whitespace
+    text = re.sub(r"\s+", " ", text).strip() 
     return text
 
 
@@ -59,7 +59,7 @@ def add_sentiment_column(df):
         df["sentiment"] = df["score"].apply(lambda x: 1 if x >= 4 else 0)
     else:
         raise ValueError(
-            "Error: The dataset must contain either 'score' or 'sentiment' columns."
+            "Error: Dataset must contain either 'score' or 'sentiment' columns"
         )
 
     return df
@@ -122,7 +122,7 @@ def process_data(df):
     """
     # Check if 'content' and 'sentiment' exist
     if "content" not in df.columns:
-        raise ValueError("Error: The DataFrame must contain a 'content' column.")
+        raise ValueError("'content' column missing in DataFrame.")
 
     # If 'sentiment' is missing, add it from 'score'
     if "sentiment" not in df.columns:
@@ -132,8 +132,10 @@ def process_data(df):
     df["content"] = df["content"].astype(str).apply(clean_text)
 
     # Split the data into training, validation, and test sets
-    df_train, df_test = train_test_split(df, test_size=0.2, random_state=RANDOM_SEED)
-    df_val, df_test = train_test_split(df_test, test_size=0.5, random_state=RANDOM_SEED)
+    df_train, df_test = train_test_split(
+        df, test_size=0.2, random_state=RANDOM_SEED)
+    df_val, df_test = train_test_split(
+        df_test, test_size=0.5, random_state=RANDOM_SEED)
 
     print(f"Training set size: {df_train.shape}")
     print(f"Validation set size: {df_val.shape}")
@@ -143,37 +145,11 @@ def process_data(df):
     max_len = 128
     batch_size = 16
 
-    train_data_loader = create_data_loader(df_train, tokenizer, max_len, batch_size)
-    val_data_loader = create_data_loader(df_val, tokenizer, max_len, batch_size)
-    test_data_loader = create_data_loader(df_test, tokenizer, max_len, batch_size)
+    train_data_loader = create_data_loader(
+        df_train, tokenizer, max_len, batch_size)
+    val_data_loader = create_data_loader(
+        df_val, tokenizer, max_len, batch_size)
+    test_data_loader = create_data_loader(
+        df_test, tokenizer, max_len, batch_size)
 
     return train_data_loader, val_data_loader, test_data_loader
-
-
-# Example usage
-if __name__ == "__main__":
-    dataset_path = r"C:\Users\noemi\sentiment-analysis-pipeline\dataset.csv"
-    df = pd.read_csv(dataset_path)
-
-    # Apply to the dataset
-    df["sentiment"] = df.score.apply(to_sentiment)
-
-    # Display initial columns
-    print("Initial Columns:", df.columns)
-
-    # Add sentiment column if missing
-    if "sentiment" not in df.columns:
-        df = add_sentiment_column(df)
-
-    # Display final columns after correction
-    print("Final Columns:", df.columns)
-
-    # Process the data
-    train_loader, val_loader, test_loader = process_data(df)
-
-    # Inspect the first batch of the training DataLoader
-    data = next(iter(train_loader))
-    print(data.keys())
-    print(data["input_ids"].shape)
-    print(data["attention_mask"].shape)
-    print(data["targets"].shape)

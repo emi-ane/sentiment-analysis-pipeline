@@ -7,14 +7,14 @@ import torch
 from torch.utils.data import DataLoader
 from transformers import BertTokenizer
 
+from src.model import (BATCH_SIZE, CLASS_NAMES, MAX_LEN, MODEL_NAME,
+                       SentimentClassifier, SentimentDataset,
+                       create_data_loader)
+
 # Add the project root to the Python path
 current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.abspath(os.path.join(current_dir, "..", ".."))
 sys.path.insert(0, project_root)
-
-from src.model import (BATCH_SIZE, CLASS_NAMES, MAX_LEN, MODEL_NAME,
-                       SentimentClassifier, SentimentDataset,
-                       create_data_loader)
 
 
 # Fixtures
@@ -109,7 +109,9 @@ def test_model_forward_pass(model, sample_dataset):
 
 
 def test_data_loader_creation(sample_data, tokenizer):
-    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
+    data_loader = create_data_loader(
+        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
+        )
 
     assert isinstance(data_loader, DataLoader)
     assert data_loader.batch_size == BATCH_SIZE
@@ -133,7 +135,9 @@ def test_training_step(model, sample_dataset):
             [sample_dataset[0]["input_ids"], sample_dataset[1]["input_ids"]]
         ).to(device),
         "attention_mask": torch.stack(
-            [sample_dataset[0]["attention_mask"], sample_dataset[1]["attention_mask"]]
+            [sample_dataset[0]["attention_mask"], 
+            sample_dataset[1]["attention_mask"]
+            ]
         ).to(device),
         "targets": torch.tensor(
             [sample_dataset[0]["targets"], sample_dataset[1]["targets"]]
@@ -177,7 +181,9 @@ def test_model_save_load(tmp_path, model):
 
 
 def test_data_loader_shuffling(sample_data, tokenizer):
-    data_loader = create_data_loader(sample_data, tokenizer, MAX_LEN, BATCH_SIZE)
+    data_loader = create_data_loader(
+        sample_data, tokenizer, MAX_LEN, BATCH_SIZE
+        )
     first_batch = next(iter(data_loader))["input_ids"]
     second_batch = next(iter(data_loader))["input_ids"]
 
