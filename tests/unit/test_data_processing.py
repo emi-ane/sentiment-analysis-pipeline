@@ -5,7 +5,6 @@ import torch
 from transformers import BertTokenizer
 
 from src.data_processing import (
-    GPReviewDataset,
     clean_text,
     create_data_loader,
 )

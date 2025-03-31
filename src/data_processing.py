@@ -1,7 +1,6 @@
 import re
 
 import numpy as np
-import pandas as pd
 import torch
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, Dataset
@@ -16,7 +15,6 @@ torch.manual_seed(RANDOM_SEED)
 
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
 
-# -------------------- Utilitaires --------------------
 
 
 def to_sentiment(rating):
@@ -64,7 +62,6 @@ def add_sentiment_column(df):
     return df
 
 
-
 class GPReviewDataset(Dataset):
     def __init__(self, reviews, targets, tokenizer, max_len):
         self.reviews = reviews
@@ -98,7 +95,6 @@ class GPReviewDataset(Dataset):
         }
 
 
-
 def create_data_loader(df, tokenizer, max_len, batch_size):
     dataset = GPReviewDataset(
         reviews=df["content"].to_numpy(),
@@ -107,7 +103,6 @@ def create_data_loader(df, tokenizer, max_len, batch_size):
         max_len=max_len,
     )
     return DataLoader(dataset, batch_size=batch_size, num_workers=0)
-
 
 
 def process_data(df):
