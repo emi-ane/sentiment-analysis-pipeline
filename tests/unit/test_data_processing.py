@@ -1,12 +1,15 @@
 import unittest
+
 import pandas as pd
 import torch
 from transformers import BertTokenizer
-from src.data_processing import clean_text, create_data_loader, GPReviewDataset
+
+from src.data_processing import GPReviewDataset, clean_text, create_data_loader
 
 # Set the model name and load the tokenizer
-MODEL_NAME = 'bert-base-cased'
+MODEL_NAME = "bert-base-cased"
 tokenizer = BertTokenizer.from_pretrained(MODEL_NAME)
+
 
 class TestDataProcessing(unittest.TestCase):
 
@@ -33,25 +36,33 @@ class TestDataProcessing(unittest.TestCase):
 
         # Expected token IDs (depends on the tokenizer's vocabulary)
         expected_tokens = tokenizer.encode(sample_text, add_special_tokens=True)
-        
-        self.assertTrue(torch.equal(encoding["input_ids"][0][:len(expected_tokens)], torch.tensor(expected_tokens)))
+
+        self.assertTrue(
+            torch.equal(
+                encoding["input_ids"][0][: len(expected_tokens)],
+                torch.tensor(expected_tokens),
+            )
+        )
 
     def test_create_data_loader(self):
         """Test if DataLoader correctly wraps the dataset."""
-        df = pd.DataFrame({
-            "content": ["This is a positive review", "This is a negative review"],
-            "sentiment": [1, 0]
-        })
+        df = pd.DataFrame(
+            {
+                "content": ["This is a positive review", "This is a negative review"],
+                "sentiment": [1, 0],
+            }
+        )
 
         max_len = 128
         batch_size = 2
         data_loader = create_data_loader(df, tokenizer, max_len, batch_size)
-        
+
         batch = next(iter(data_loader))
-        
+
         self.assertEqual(batch["input_ids"].shape, (batch_size, max_len))
         self.assertEqual(batch["attention_mask"].shape, (batch_size, max_len))
         self.assertEqual(batch["targets"].shape, (batch_size,))
+
 
 if __name__ == "__main__":
     unittest.main()
