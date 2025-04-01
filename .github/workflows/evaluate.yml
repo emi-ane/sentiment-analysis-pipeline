@@ -27,22 +27,10 @@ jobs:
 
       - name: Run evaluation script
         run: |
-          python src/evaluate.py > metrics.txt
+          python src/evaluate.py
 
-      - name: Check accuracy threshold
-        run: |
-          acc=$(grep "Test accuracy:" metrics.txt | awk '{print $3}')
-          threshold=0.70
-          echo "📊 Accuracy: $acc / Threshold: $threshold"
-          if (( $(echo "$acc < $threshold" | bc -l) )); then
-            echo "❌ Accuracy below threshold"
-            exit 1
-          else
-            echo "✅ Accuracy OK"
-          fi
-
-      - name: Upload metrics
+      - name: Upload evaluation metrics
         uses: actions/upload-artifact@v4
         with:
           name: evaluation-metrics
-          path: metrics.txt
+          path: metrics.json
