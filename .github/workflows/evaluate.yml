@@ -2,7 +2,7 @@ name: Model Evaluation
 
 on:
   workflow_run:
-    workflows: ["Tests and Linting"]  # ← adapte ce nom si besoin
+    workflows: ["Tests and Linting"]  # ← adapte si ton workflow de tests a un autre nom
     types:
       - completed
 
@@ -12,13 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code with Git LFS
+      - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          lfs: true  # ← active le support LFS
-
-      - name: Pull Git LFS files
-        run: git lfs pull  # ← télécharge les fichiers (comme best_model.bin)
 
       - name: Set up Python
         uses: actions/setup-python@v5
