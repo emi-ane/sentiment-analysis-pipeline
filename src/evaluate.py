@@ -20,8 +20,7 @@ model = SentimentClassifier(n_classes=len(CLASS_NAMES))
 model.load_state_dict(
     torch.load(
         "src/best_model.bin",
-        map_location=device,
-        weights_only=False
+        map_location=device
     )
 )
 model = model.to(device)
