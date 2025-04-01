@@ -1,9 +1,11 @@
+import sys
+import json
+
 import torch
 import pandas as pd
-import json
-import sys
 from sklearn.model_selection import train_test_split
 from transformers import BertTokenizer
+from huggingface_hub import hf_hub_download
 
 from model import (
     SentimentClassifier,
@@ -17,19 +19,18 @@ from model import (
 
 # Configuration
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-MODEL_PATH = "src/best_model.bin"
-DATASET_PATH = "dataset.csv"
 THRESHOLD = 0.70
+DATASET_PATH = "dataset.csv"
+
+# Télécharger le modèle depuis Hugging Face
+MODEL_PATH = hf_hub_download(
+    repo_id="Cassydy-prog/sentiment-best-model",
+    filename="best_model.pth"
+)
 
 # Charger le modèle
 model = SentimentClassifier(n_classes=len(CLASS_NAMES))
-model.load_state_dict(
-    torch.load(
-        MODEL_PATH,
-        map_location=device,
-        weights_only=False
-    )
-)
+model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
 model = model.to(device)
 
 # Tokenizer
