@@ -25,7 +25,7 @@ DATASET_PATH = "dataset.csv"
 # Télécharger le modèle depuis Hugging Face
 MODEL_PATH = hf_hub_download(
     repo_id="Cassydy-prog/sentiment-best-model",
-    filename="best_model.pth"
+    filename="best_model.bin"
 )
 
 # Charger le modèle
