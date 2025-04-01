@@ -23,7 +23,13 @@ THRESHOLD = 0.70
 
 # Charger le modèle
 model = SentimentClassifier(n_classes=len(CLASS_NAMES))
-model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+model.load_state_dict(
+    torch.load(
+        MODEL_PATH,
+        map_location=device,
+        weights_only=False
+    )
+)
 model = model.to(device)
 
 # Tokenizer
