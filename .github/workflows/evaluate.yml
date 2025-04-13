@@ -2,7 +2,7 @@ name: Model Evaluation
 
 on:
   workflow_run:
-    workflows: ["Tests and Linting"]  # ← adapte si ton workflow de tests a un autre nom
+    workflows: ["Tests and Linting"]  
     types:
       - completed
 
